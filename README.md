@@ -1,81 +1,82 @@
-# 🛡️ SentinelOps — Intelligent Network Intrusion Detection & Prevention System
+# 🛡️ SentinelOps
 
-> **AI-powered IDS/IPS for network attack detection, analysis, and automated prevention**
+### Intelligent Network Intrusion Detection & Prevention System
 
-SentinelOps is a graduation project that combines **Machine Learning, Network Security, and DevOps** to build an intelligent system capable of detecting suspicious network traffic and taking automated prevention actions.
+SentinelOps is a graduation project that combines **Machine Learning, Network Security, and DevOps** to build an intelligent system for detecting malicious network traffic and automatically responding to detected attacks.
 
-The system analyzes network traffic, extracts relevant features, classifies the traffic using a Machine Learning model, and can automatically respond to detected attacks by applying firewall blocking rules and generating alerts.
+The system is designed to analyze network traffic, extract relevant features, classify traffic using a Machine Learning model, and perform automated prevention actions such as blocking malicious source IP addresses through firewall rules.
 
 ---
 
 ## 🎯 Project Objectives
 
-The main objectives of SentinelOps are:
+SentinelOps aims to:
 
 * Detect malicious network traffic using Machine Learning.
 * Identify different types of network attacks.
-* Analyze network traffic using packet-level information.
+* Analyze real network traffic using Scapy.
+* Extract network traffic features for ML inference.
 * Automatically respond to detected attacks.
 * Block malicious source IP addresses using firewall rules.
 * Generate security alerts.
+* Provide an API for detection and system integration.
 * Containerize the system using Docker.
-* Deploy and manage components using Kubernetes.
-* Automate the CI/CD workflow using Jenkins.
+* Deploy the system using Kubernetes.
+* Automate CI/CD using Jenkins.
 * Monitor the system using Prometheus and Grafana.
-* Provide a scalable architecture suitable for real-world environments.
 
 ---
 
-## 🏗️ High-Level Architecture
+# 🏗️ System Architecture
 
 ```text
-                    ┌─────────────────────┐
-                    │   Network Traffic   │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │       Scapy         │
-                    │ Traffic Collector   │
-                    └──────────┬──────────┘
-                               │
-                               │ Features
-                               ▼
-                    ┌─────────────────────┐
-                    │    ML Detection     │
-                    │  Random Forest      │
-                    └──────────┬──────────┘
-                               │
-                    ┌──────────┴──────────┐
-                    │                     │
-                 Normal                Attack
-                    │                     │
-                    ▼                     ▼
-                  Allow          ┌─────────────────┐
-                                 │ Response Engine │
-                                 └────────┬────────┘
-                                          │
-                             ┌────────────┴────────────┐
-                             │                         │
-                             ▼                         ▼
-                       Firewall Block             Alert
-                       Source IP                  Security
-                             │
-                             ▼
-                    ┌─────────────────────┐
-                    │ Monitoring / Logs   │
-                    │ Prometheus/Grafana  │
-                    └─────────────────────┘
+                         Network Traffic
+                                │
+                                ▼
+                     ┌─────────────────────┐
+                     │        Scapy        │
+                     │  Traffic Collector  │
+                     └──────────┬──────────┘
+                                │
+                                ▼
+                     ┌─────────────────────┐
+                     │ Feature Extraction  │
+                     └──────────┬──────────┘
+                                │
+                                ▼
+                     ┌─────────────────────┐
+                     │   ML Detection      │
+                     │   Random Forest     │
+                     └──────────┬──────────┘
+                                │
+                       ┌────────┴────────┐
+                       │                 │
+                    BENIGN             ATTACK
+                       │                 │
+                       ▼                 ▼
+                     Allow      ┌─────────────────┐
+                                │ Response Engine │
+                                └────────┬────────┘
+                                         │
+                                ┌────────┴────────┐
+                                │                 │
+                                ▼                 ▼
+                           Firewall Block      Alert
+                           Source IP          Security
+                                │
+                                ▼
+                         Monitoring System
+                       Prometheus + Grafana
 ```
 
 ---
 
 # 🧠 Machine Learning Pipeline
 
-The Machine Learning pipeline is responsible for transforming raw network traffic into a format that can be processed by the detection model.
+The Machine Learning pipeline prepares the CICIDS2017 dataset and trains the intrusion detection model.
 
 ```text
-Raw CICIDS2017 Dataset
+CICIDS2017 Dataset
         │
         ▼
 Data Validation
@@ -106,11 +107,11 @@ Model Evaluation
 
 # 📊 Dataset
 
-SentinelOps currently uses the **CICIDS2017** dataset for Machine Learning training and evaluation.
+The project currently uses the **CICIDS2017** dataset for Machine Learning training and evaluation.
 
-The dataset contains benign network traffic as well as multiple attack categories.
+The dataset contains both benign traffic and different types of network attacks.
 
-### Main attack categories used by the project include:
+The project works with multiple attack classes, including:
 
 * BENIGN
 * DDoS
@@ -126,7 +127,7 @@ The dataset contains benign network traffic as well as multiple attack categorie
 * Infiltration
 * Web Attacks
 
-> The exact classes depend on the preprocessing and classification configuration used in the current project version.
+> The exact classes used by the final model depend on the preprocessing and classification configuration.
 
 ---
 
@@ -151,40 +152,37 @@ SentinelOps/
 ├── class_distribution.py
 ├── distribution_analysis.py
 ├── confusion_matrix.py
-├── eda.py
-│
-├── data/
-│   ├── raw/
-│   │   └── CICIDS2017 CSV files
-│   │
-│   └── processed/
-│       ├── cicids2017_clean.csv
-│       ├── cicids2017_features_selected.csv
-│       ├── train.csv
-│       └── test.csv
-│
-└── models/
-    ├── random_forest.pkl
-    └── balanced_random_forest.pkl
+└── eda.py
 ```
 
-> `data/` and trained model files are excluded from the GitHub repository because of their large size.
+### Dataset and model directories
+
+The following directories/files are intentionally excluded from GitHub because of their large size:
+
+```text
+data/raw/
+data/processed/
+archive.zip
+models/*.pkl
+```
+
+They should be provided separately.
 
 ---
 
 # 🔍 Data Validation
 
-Before training, the dataset is validated to ensure that it is suitable for Machine Learning.
+Before training the model, the dataset is checked for common data-quality problems.
 
 The validation process checks:
 
 * Dataset shape
-* Label column existence
+* Label column
 * Missing values
 * Infinite values
-* Duplicate records
+* Duplicate rows
 * Data types
-* Label/class distribution
+* Class distribution
 
 Run:
 
@@ -196,18 +194,18 @@ python validate_data.py
 
 # 🧹 Data Preprocessing
 
-The preprocessing stage prepares the CICIDS2017 dataset for Machine Learning.
+The preprocessing stage prepares the raw CICIDS2017 files for Machine Learning.
 
 Main operations include:
 
-* Combining dataset files
-* Cleaning column names
-* Removing invalid values
-* Handling infinite values
-* Handling missing values
-* Removing duplicate rows
-* Converting features to numeric format
-* Preparing the target label
+* Loading the dataset files.
+* Combining the required data.
+* Cleaning the data.
+* Handling missing values.
+* Handling infinite values.
+* Removing duplicate records.
+* Converting features to numeric values.
+* Preparing the target label.
 
 Run:
 
@@ -219,7 +217,7 @@ python preprocessing.py
 
 # 🎯 Feature Selection
 
-Feature selection is used to reduce unnecessary features and keep the most useful network traffic characteristics for the Machine Learning model.
+Feature selection is used to identify the most useful network traffic features and reduce unnecessary features.
 
 Run:
 
@@ -227,48 +225,60 @@ Run:
 python feature_selection.py
 ```
 
-The selected features are then used for model training.
+The selected features are then used during model training.
 
 ---
 
 # 🌲 Machine Learning Model
 
-The current main detection model is based on:
+The main Machine Learning algorithm currently used by SentinelOps is:
 
-### Random Forest
+## Random Forest
 
-Random Forest was selected because it:
+Random Forest was selected because it is well suited for tabular network traffic data and can handle nonlinear relationships between network features.
 
-* Works well with tabular network traffic data.
+Advantages include:
+
+* Good performance for classification.
+* Works well with numerical network traffic features.
 * Handles nonlinear relationships.
-* Supports many numerical features.
-* Is relatively robust to noisy data.
+* Relatively robust to noisy data.
 * Provides feature importance.
-* Performs well for classification problems.
+* Suitable for multiclass classification.
 
-Training:
+---
+
+# 🏋️ Model Training
+
+Train the main Random Forest model:
 
 ```bash
 python train_model.py
 ```
 
-A balanced Random Forest training pipeline is also available:
+A balanced Random Forest implementation is also available:
 
 ```bash
 python train_balanced_rf.py
+```
+
+The trained models are stored locally under:
+
+```text
+models/
 ```
 
 ---
 
 # 📈 Model Evaluation
 
-The trained model can be evaluated using:
+The project contains several scripts for analyzing the trained model.
+
+### Evaluate the model
 
 ```bash
 python evaluate_model.py
 ```
-
-Additional analysis tools are available for:
 
 ### Confusion Matrix
 
@@ -288,7 +298,7 @@ python feature_importance.py
 python analyze_errors.py
 ```
 
-### Top Feature Analysis
+### Top Features
 
 ```bash
 python analyze_top_features.py
@@ -300,6 +310,12 @@ python analyze_top_features.py
 python class_distribution.py
 ```
 
+### Distribution Analysis
+
+```bash
+python distribution_analysis.py
+```
+
 ### Exploratory Data Analysis
 
 ```bash
@@ -308,42 +324,32 @@ python eda.py
 
 ---
 
-# 🧪 Current ML Training Results
+# 📊 Current ML Pipeline
 
-The current project pipeline has successfully reached the Machine Learning training stage.
+The current ML pipeline has successfully reached the training stage.
 
-The training dataset contains approximately:
+The current training dataset contains approximately:
 
 ```text
-2,016,638 samples
-70 input features
+Samples: 2,016,638
+Input Features: 70
 ```
 
-The current primary classifier is:
+The primary classifier is:
 
 ```text
 Random Forest
 ```
 
-The trained model is saved locally as:
-
-```text
-models/random_forest.pkl
-```
-
-A balanced Random Forest implementation is also included:
-
-```text
-models/balanced_random_forest.pkl
-```
+The project also contains a balanced Random Forest implementation for handling class imbalance.
 
 ---
 
-# 🌐 Real-Time Traffic Detection
+# 🌐 Real-Time Detection
 
-The final SentinelOps system is designed to move from offline dataset-based detection to real network traffic detection.
+The final system is designed to move from offline dataset-based classification to real-time network traffic detection.
 
-The planned flow is:
+The planned real-time workflow is:
 
 ```text
 Live Network Traffic
@@ -355,83 +361,180 @@ Live Network Traffic
 Feature Extraction
         │
         ▼
-Machine Learning Model
+ML Model
         │
         ▼
 Prediction
         │
-        ├── BENIGN
-        │      │
-        │      ▼
-        │    Allow
-        │
-        └── ATTACK
-               │
-               ▼
-        Response Engine
-               │
-          ┌────┴────┐
-          ▼         ▼
-       Firewall    Alert
-        Block
+        ├───────────────┐
+        │               │
+      BENIGN          ATTACK
+        │               │
+        ▼               ▼
+      Allow      Response Engine
+                        │
+                 ┌──────┴──────┐
+                 │             │
+                 ▼             ▼
+             Firewall       Alert
+               Block
 ```
 
-Scapy will be responsible for capturing packets and extracting the network information required by the ML detection pipeline.
+Scapy will be responsible for capturing network packets and collecting the information required to generate the ML features.
 
 ---
 
-# 🛡️ IPS Response
+# 🛡️ Intrusion Prevention
 
-When malicious traffic is detected, SentinelOps is designed to move beyond detection and perform an automatic prevention action.
+SentinelOps is designed as both an **IDS and IPS**.
 
-Example:
+### IDS
+
+The system detects and classifies suspicious traffic using Machine Learning.
 
 ```text
-Attack detected
-      │
-      ▼
-Extract source IP
-      │
-      ▼
-Verify prediction
-      │
-      ▼
-Apply firewall rule
-      │
-      ▼
-Block attacker IP
-      │
-      ▼
-Generate alert
+Traffic
+   ↓
+Feature Extraction
+   ↓
+ML Prediction
+   ↓
+Attack Detection
 ```
 
-The prevention layer will use **Firewall rules** to block malicious source IP addresses.
+### IPS
+
+After an attack is detected, the system can perform an automated prevention action.
+
+```text
+Attack Detected
+      ↓
+Extract Source IP
+      ↓
+Verify Prediction
+      ↓
+Firewall Rule
+      ↓
+Block Source IP
+      ↓
+Generate Alert
+```
+
+The prevention mechanism will use **Firewall rules** to block malicious source IP addresses.
 
 ---
 
-# 🐳 DevOps Architecture
+# 🐍 Scapy
 
-SentinelOps is designed using DevOps practices to make the system reproducible, deployable, and monitorable.
+Scapy is used in the real-time traffic collection layer.
 
-Main technologies:
+Its responsibilities include:
 
-| Technology | Purpose                      |
-| ---------- | ---------------------------- |
-| Python     | ML and backend development   |
-| Scapy      | Network traffic capture      |
-| FastAPI    | API layer                    |
-| Docker     | Containerization             |
-| Kubernetes | Container orchestration      |
-| Jenkins    | CI/CD automation             |
-| Prometheus | Metrics collection           |
-| Grafana    | Monitoring and visualization |
-| Firewall   | Automated prevention         |
+* Capturing packets.
+* Reading packet information.
+* Identifying network protocols.
+* Extracting source and destination information.
+* Collecting traffic statistics.
+* Preparing information required for ML feature extraction.
+
+Scapy connects the real network environment with the Machine Learning detection pipeline.
 
 ---
 
-# 🔄 CI/CD Pipeline
+# ⚡ FastAPI
 
-Jenkins will automate the build, test, and deployment process.
+FastAPI will provide the API layer between the different system components.
+
+The API is designed to support:
+
+* Traffic analysis requests.
+* ML predictions.
+* Detection results.
+* Alert information.
+* System health checks.
+* Integration with other services.
+
+Expected flow:
+
+```text
+Scapy
+  │
+  ▼
+FastAPI
+  │
+  ▼
+ML Model
+  │
+  ▼
+Prediction
+  │
+  ▼
+Response Engine
+```
+
+---
+
+# 🐳 Docker
+
+The system components will be containerized using Docker.
+
+Expected services include:
+
+```text
+Docker
+│
+├── Traffic Collector
+├── Detection API
+├── ML Model Service
+├── Response Engine
+└── Monitoring
+```
+
+Docker provides:
+
+* Reproducible environments.
+* Easier deployment.
+* Dependency isolation.
+* Portable services.
+
+---
+
+# ☸️ Kubernetes
+
+Kubernetes will be used to deploy and manage the containerized components.
+
+Expected architecture:
+
+```text
+Kubernetes Cluster
+│
+├── Traffic Collector
+│
+├── Detection API
+│
+├── ML Service
+│
+├── Response Engine
+│
+└── Monitoring
+    ├── Prometheus
+    └── Grafana
+```
+
+Kubernetes provides:
+
+* Container orchestration.
+* Scaling.
+* Service discovery.
+* Deployment management.
+* Self-healing.
+* Resource management.
+
+---
+
+# 🔄 CI/CD with Jenkins
+
+Jenkins will automate the CI/CD pipeline.
 
 ```text
 Developer
@@ -443,11 +546,8 @@ GitHub
 Jenkins
     │
     ├── Build
-    │
     ├── Test
-    │
     ├── Docker Build
-    │
     ├── Image Push
     │
     ▼
@@ -455,67 +555,38 @@ Kubernetes
     │
     ▼
 SentinelOps
-    │
-    ▼
-Monitoring
-Prometheus + Grafana
 ```
 
----
-
-# ☸️ Kubernetes
-
-The system is designed to run as containerized workloads inside Kubernetes.
-
-Expected components include:
-
-```text
-Kubernetes Cluster
-│
-├── Detection Service
-│
-├── Traffic Collector
-│
-├── Response Engine
-│
-└── Monitoring
-    ├── Prometheus
-    └── Grafana
-```
-
-Kubernetes provides:
-
-* Container orchestration
-* Scaling
-* Service discovery
-* Deployment management
-* Self-healing
-* Resource management
+The goal is to automatically build, test, package, and deploy changes.
 
 ---
 
 # 📊 Monitoring
 
-Prometheus and Grafana will be used to monitor the operational state of SentinelOps.
+SentinelOps will use:
+
+* **Prometheus** for metrics collection.
+* **Grafana** for monitoring and visualization.
 
 Possible metrics include:
 
-* Packets processed
-* Detection requests
-* Attack count
-* Normal traffic count
-* Detection latency
-* Model response time
-* Blocked IP count
-* API availability
-* Container health
+* Packets processed.
+* Number of detected attacks.
+* Number of blocked IPs.
+* Detection latency.
+* Model inference time.
+* API health.
+* Container health.
+* System resource usage.
 
-Example monitoring flow:
+Example:
 
 ```text
 SentinelOps
      │
-     │ Metrics
+     ▼
+Metrics
+     │
      ▼
 Prometheus
      │
@@ -523,7 +594,7 @@ Prometheus
 Grafana
      │
      ▼
-Security / Operations Dashboard
+Security Dashboard
 ```
 
 ---
@@ -537,17 +608,15 @@ git clone https://github.com/Abdel-3ziz/SentinelOps.git
 cd SentinelOps
 ```
 
----
-
 ## 2. Install Python Dependencies
 
-Create a Python environment if desired:
+If a virtual environment is preferred:
 
 ```bash
 python -m venv venv
 ```
 
-Activate it on Windows:
+Windows:
 
 ```bash
 venv\Scripts\activate
@@ -559,15 +628,15 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-> If `requirements.txt` is not available yet, the project dependencies should be added before the final release.
+> `requirements.txt` should contain the Python dependencies required by the current implementation.
 
 ---
 
 # 📥 Dataset Setup
 
-The CICIDS2017 dataset is **not included in the GitHub repository** because of its large size.
+The CICIDS2017 dataset is **not included in this repository** because of its large size.
 
-After downloading the dataset, place the CSV files inside:
+Download the dataset separately and place the CSV files inside:
 
 ```text
 data/raw/
@@ -592,27 +661,27 @@ data/
 
 # 🚀 Running the ML Pipeline
 
-Run the steps in the following order:
+Run the following steps in order.
 
-### Step 1 — Validate Dataset
+### Step 1 — Validate
 
 ```bash
 python validate_data.py
 ```
 
-### Step 2 — Preprocess Dataset
+### Step 2 — Preprocess
 
 ```bash
 python preprocessing.py
 ```
 
-### Step 3 — Select Features
+### Step 3 — Feature Selection
 
 ```bash
 python feature_selection.py
 ```
 
-### Step 4 — Split Dataset
+### Step 4 — Train/Test Split
 
 ```bash
 python train_test_split.py
@@ -624,7 +693,7 @@ python train_test_split.py
 python train_model.py
 ```
 
-### Step 6 — Evaluate Model
+### Step 6 — Evaluate
 
 ```bash
 python evaluate_model.py
@@ -634,13 +703,13 @@ python evaluate_model.py
 
 # 👥 Team Workflow
 
-Each team member should:
+Clone the repository:
 
 ```bash
 git clone https://github.com/Abdel-3ziz/SentinelOps.git
 ```
 
-Then obtain the dataset separately and place it inside:
+Each team member should obtain the dataset separately and place it inside:
 
 ```text
 data/raw/
@@ -648,13 +717,13 @@ data/raw/
 
 Do **not** commit the dataset to GitHub.
 
-Before pushing code:
+Before pushing changes:
 
 ```bash
 git status
 ```
 
-Make sure large datasets and generated files are not included.
+Make sure that datasets, generated files, credentials, and large files are not included.
 
 Then:
 
@@ -666,9 +735,9 @@ git push
 
 ---
 
-# 🚫 Files Excluded from GitHub
+# 🚫 Files Not Stored in GitHub
 
-The following files/directories are intentionally excluded:
+The following are intentionally excluded:
 
 ```text
 data/raw/
@@ -677,48 +746,57 @@ archive.zip
 models/*.pkl
 ```
 
-These files can be distributed separately using a shared storage location such as Google Drive or another dataset/model storage service.
+These files should be distributed separately using shared storage when required.
+
+This keeps the GitHub repository lightweight and focused on source code.
 
 ---
 
-# 🔐 Security Notes
+# 🔐 Security
 
-Do not commit sensitive information such as:
+Never commit sensitive information to the repository.
+
+Do not upload:
 
 * API keys
 * Passwords
-* Tokens
 * AWS credentials
 * Private keys
+* Access tokens
 * `.env` files
-* Personal access tokens
+* Database passwords
+* Personal credentials
 
-Use environment variables or secret-management solutions instead.
+Use environment variables or a proper secret-management system instead.
 
 ---
 
-# 🗺️ Development Roadmap
+# 🗺️ Project Roadmap
 
-### ✅ Completed
+## ✅ Completed
 
-* [x] CICIDS2017 dataset collection
-* [x] Dataset validation
-* [x] Data cleaning
+* [x] CICIDS2017 dataset preparation
+* [x] Data validation
+* [x] Missing-value checking
+* [x] Infinite-value checking
 * [x] Duplicate removal
-* [x] Feature preprocessing
+* [x] Data preprocessing
 * [x] Feature selection
 * [x] Train/test preparation
 * [x] Random Forest training
+* [x] Balanced Random Forest implementation
 * [x] Model evaluation scripts
+* [x] Confusion matrix analysis
 * [x] Feature importance analysis
 * [x] Error analysis
+* [x] Class distribution analysis
 
-### 🚧 In Progress / Planned
+## 🚧 In Progress / Planned
 
-* [ ] Real-time traffic collection using Scapy
+* [ ] Real-time network traffic collection using Scapy
 * [ ] Real-time feature extraction
-* [ ] FastAPI detection API
-* [ ] ML inference service
+* [ ] FastAPI detection service
+* [ ] ML inference integration
 * [ ] Firewall-based automated prevention
 * [ ] Security alert system
 * [ ] Docker containerization
@@ -726,59 +804,65 @@ Use environment variables or secret-management solutions instead.
 * [ ] Jenkins CI/CD pipeline
 * [ ] Prometheus monitoring
 * [ ] Grafana dashboard
-* [ ] End-to-end integration
-* [ ] Final system testing
+* [ ] End-to-end system integration
+* [ ] Final security testing
+* [ ] Performance testing
 
 ---
 
-# 🎓 Academic Project
+# 🎓 Graduation Project
 
-SentinelOps is developed as a **graduation project** combining:
+SentinelOps is a graduation project focused on integrating:
 
+* Machine Learning
 * Network Security
 * Intrusion Detection Systems
 * Intrusion Prevention Systems
-* Machine Learning
 * Network Traffic Analysis
-* DevOps
-* Containerization
+* Automated Firewall Response
+* Docker
 * Kubernetes
-* Monitoring
+* Jenkins
+* Prometheus
+* Grafana
 
-The project aims to demonstrate how Machine Learning and DevOps can be combined to build an automated and scalable network security platform.
+The project aims to demonstrate how AI and DevOps can be combined to create an automated, scalable, and monitorable network security platform.
 
 ---
 
-# 👨‍💻 Repository
+# 🔗 Repository
 
-**GitHub:**
+GitHub:
+
 https://github.com/Abdel-3ziz/SentinelOps
 
 ---
 
-## ⭐ Project Vision
+# 🚀 Project Vision
 
-SentinelOps aims to evolve from a traditional offline Machine Learning classifier into a complete intelligent security platform:
+The final goal of SentinelOps is to evolve from an offline Machine Learning classifier into a complete intelligent security platform.
 
 ```text
-              SENTINELOPS
-                   │
-       ┌───────────┼───────────┐
-       ▼           ▼           ▼
-   Detection    Prevention   Monitoring
-       │           │           │
-       ▼           ▼           ▼
-      ML        Firewall    Prometheus
-       │           │           │
-       └───────────┼───────────┘
-                   ▼
-              Kubernetes
-                   │
-                   ▼
-                Jenkins
-                   │
-                   ▼
-            Automated Security
+                       SENTINELOPS
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+          ▼                 ▼                 ▼
+      Detection         Prevention        Monitoring
+          │                 │                 │
+          ▼                 ▼                 ▼
+         ML             Firewall         Prometheus
+          │                 │                 │
+          └─────────────────┼─────────────────┘
+                            │
+                            ▼
+                       Kubernetes
+                            │
+                            ▼
+                         Jenkins
+                            │
+                            ▼
+                    Automated Security
 ```
 
-**Detect → Analyze → Prevent → Monitor → Automate**
+### Detect → Analyze → Prevent → Monitor → Automate

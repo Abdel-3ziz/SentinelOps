@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Datasets
+data/raw/
+data/processed/
+archive.zip
+
+# Generated models
+models/*.pkl
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
